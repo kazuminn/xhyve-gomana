@@ -63,19 +63,22 @@ func CreateInitFile(*cobra.Command, []string) {
 		panic(err)
 	}
 
-	fmt.Println(current)
-
+	//template に変数を適用
 	tpl := template.Must(template.ParseFiles(gopath + "/src/github.com/kazuminn/xhyve-gomana/template/sample.tpl"))
 
+	//create uuid
 	member := UUID{uuid.NewV4()} 
 
+	//setting output file
 	file, err := os.Create(current + "/Config")
 	defer file.Close()
 
 	if err != nil {
 		panic(err)
         }
+	
 
+	//output file
 	err = tpl.Execute(file, member)
 
 	if err != nil {
