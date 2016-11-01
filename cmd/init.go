@@ -57,13 +57,28 @@ func init() {
 
 func CreateInitFile(*cobra.Command, []string) {
 	gopath := os.Getenv("GOPATH")
+	current, err  := os.Getwd()
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(current)
 
 	tpl := template.Must(template.ParseFiles(gopath + "/src/github.com/kazuminn/xhyve-gomana/template/sample.tpl"))
 
 	member := UUID{uuid.NewV4()} 
 
-	if err := tpl.Execute(os.Stdout, member); err != nil {
-	        fmt.Println(err)
-    	}
+	file, err := os.Create(current + "/Config")
+	defer file.Close()
 
+	if err != nil {
+		panic(err)
+        }
+
+	err = tpl.Execute(file, member)
+
+	if err != nil {
+		panic(err)
+    	}
 }
