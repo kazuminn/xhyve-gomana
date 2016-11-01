@@ -16,9 +16,16 @@ package cmd
 
 import (
 	"fmt"
+	"text/template"
+	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/satori/go.uuid"
 )
+
+type UUID struct {
+	Uuid uuid.UUID
+}
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
@@ -30,10 +37,7 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Work your own magic here
-		fmt.Println("init called")
-	},
+	Run: CreateInitFile,
 }
 
 func init() {
@@ -48,5 +52,18 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+}
+
+func CreateInitFile(*cobra.Command, []string) {
+	gopath := os.Getenv("GOPATH")
+
+	tpl := template.Must(template.ParseFiles(gopath + "/src/github.com/kazuminn/xhyve-gomana/template/sample.tpl"))
+
+	member := UUID{uuid.NewV4()} 
+
+	if err := tpl.Execute(os.Stdout, member); err != nil {
+	        fmt.Println(err)
+    	}
 
 }
